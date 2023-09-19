@@ -1,0 +1,19 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://${easyadmin.datasource.host}:${easyadmin.datasource.port}/${easyadmin.datasource.database}
+    username: ${POSTGRES_USERNAME:postgres}
+    password: ${POSTGRES_PASSWORD:1234567}
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+easyadmin:
+  datasource:
+    host: ${POSTGRES_HOST:host.docker.internal}
+    port: ${POSTGRES_PORT:5432}
+    database: ${POSTGRES_DATABASE:easyadmin}
