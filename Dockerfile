@@ -17,5 +17,6 @@ ENV POSTGRES_HOST=host.docker.internal
 ENV POSTGRES_PORT=5432
 ENV POSTGRES_DATABASE=easyadmin
 COPY --from=builder /app/target/easyadmin-0.0.1-SNAPSHOT.jar ./easyadmin.jar
-EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "/app/easyadmin.jar"]
+EXPOSE 8080 5005
+ENV JVM_OPTS=""
+ENTRYPOINT java ${JVM_OPTS} -jar /app/easyadmin.jar

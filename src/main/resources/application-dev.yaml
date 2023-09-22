@@ -14,6 +14,6 @@ spring:
 
 easyadmin:
   datasource:
-    host: ${POSTGRES_HOST:host.docker.internal}
+    host: ${POSTGRES_HOST:localhost}
     port: ${POSTGRES_PORT:5432}
     database: ${POSTGRES_DATABASE:easyadmin}
