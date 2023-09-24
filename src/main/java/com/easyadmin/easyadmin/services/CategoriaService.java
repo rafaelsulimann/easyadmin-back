@@ -3,39 +3,59 @@ package com.easyadmin.easyadmin.services;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.easyadmin.easyadmin.dtos.CategoriaRequestDTO;
 import com.easyadmin.easyadmin.dtos.CategoriaResponseDTO;
 import com.easyadmin.easyadmin.models.Categoria;
 import com.easyadmin.easyadmin.repositories.CategoriaRepository;
+import com.easyadmin.easyadmin.services.exceptions.ResourceNotFoundException;
+import com.easyadmin.easyadmin.utils.constraints.ExceptionMessage;
 
-import lombok.extern.log4j.Log4j2;
-
-@Log4j2
 @Service
 public class CategoriaService {
-    
+
     @Autowired
     private CategoriaRepository categoriaRepository;
 
-    @Transactional(readOnly = true)
-    public Page<CategoriaResponseDTO> listarTodasCategoria(Specification<Categoria> spec, Pageable pageable){
-        log.info("Listando todas categorias...");
-        Page<Categoria> listaCategorias = this.categoriaRepository.findAll(spec, pageable);
-        log.info("Categorias retornadas: {}", listaCategorias);
-        return listaCategorias.map(categoria -> new CategoriaResponseDTO(categoria));
+    public Page<CategoriaResponseDTO> findAll(Specification<Categoria> spec, Pageable pageable) {
+        Page<Categoria> searchResult = this.categoriaRepository.findAll(spec, pageable);
+        Page<CategoriaResponseDTO> response = searchResult.map(categoria -> new CategoriaResponseDTO(categoria));
+        return response;
     }
 
-    public CategoriaResponseDTO inserirCategoria(@Valid CategoriaRequestDTO dto) {
-        log.info("Request inserirCategoria, request: {}", dto);
-        Categoria entity = dto.convertToEntity();
+    public CategoriaResponseDTO insert (@Valid CategoriaRequestDTO dto){
+        Categoria entity = new Categoria(dto, this.categoriaRepository);
         entity = this.categoriaRepository.save(entity);
-        log.info("Categoria {} salva com sucesso", entity);
         return new CategoriaResponseDTO(entity);
     }
+
+    public CategoriaResponseDTO update(Long id, @Valid CategoriaRequestDTO dto) {
+        Categoria entity = this.findCategoriaById(id);
+        entity.update(dto, this.categoriaRepository);
+        entity = this.categoriaRepository.save(entity);
+        return new CategoriaResponseDTO(entity);
+    }
+
+    private Categoria findCategoriaById(Long id) {
+        return this.categoriaRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(ExceptionMessage.CATEGORIA_NOT_FOUND));
+    }
+
+    public void delete(Long id) {
+        try {
+            this.categoriaRepository.deleteById(id);
+        } catch (EmptyResultDataAccessException e) {
+            throw new ResourceNotFoundException(ExceptionMessage.CATEGORIA_NOT_FOUND);
+        }
+    }
+
+    public CategoriaResponseDTO findById(Long id) {
+        Categoria entity = this.findCategoriaById(id);
+        return new CategoriaResponseDTO(entity);
+    }
+    
 }

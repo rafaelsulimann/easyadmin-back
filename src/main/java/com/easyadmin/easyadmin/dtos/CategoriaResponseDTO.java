@@ -9,18 +9,18 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 public class CategoriaResponseDTO implements Serializable{
 
     private static final long serialVersionUID = 1L;
 
-    private Long categoriaId;
+    private Long id;
     private String nome;
 
-    public CategoriaResponseDTO(Categoria entity){
-        this.categoriaId = entity.getId();
-        this.nome = entity.getNome();
+    public CategoriaResponseDTO(Categoria entity) {
+        id = entity.getId();
+        nome = entity.getNome();
     }
     
 }

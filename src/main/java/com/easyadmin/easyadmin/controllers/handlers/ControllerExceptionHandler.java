@@ -15,9 +15,17 @@ import com.easyadmin.easyadmin.dtos.CustomErrorDTO;
 import com.easyadmin.easyadmin.dtos.FieldMessageDTO;
 import com.easyadmin.easyadmin.dtos.ValidationErrorDTO;
 import com.easyadmin.easyadmin.services.exceptions.DatabaseException;
+import com.easyadmin.easyadmin.services.exceptions.ResourceNotFoundException;
 
 @ControllerAdvice
 public class ControllerExceptionHandler {
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<CustomErrorDTO> resourceNotFound(ResourceNotFoundException e, HttpServletRequest request){
+        HttpStatus status = HttpStatus.NOT_FOUND;
+        CustomErrorDTO error = new CustomErrorDTO(LocalDateTime.now(), status.value(), e.getMessage(), request.getRequestURI());
+        return ResponseEntity.status(status).body(error);
+    }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<CustomErrorDTO> methodArgumentNotValid(MethodArgumentNotValidException e, HttpServletRequest request){

@@ -13,9 +13,12 @@ INSERT INTO tb_categorias (nome) VALUES ('BRINQUEDO');
 INSERT INTO tb_categorias (nome) VALUES ('ELETRONICO');
 
 
-INSERT INTO tb_produtos_categorias (produto_id, categoria_id) VALUES (1, 6);
-INSERT INTO tb_produtos_categorias (produto_id, categoria_id) VALUES (2, 7);
-INSERT INTO tb_produtos_categorias (produto_id, categoria_id) VALUES (3, 6);
-INSERT INTO tb_produtos_categorias (produto_id, categoria_id) VALUES (4, 4);
-INSERT INTO tb_produtos_categorias (produto_id, categoria_id) VALUES (5, 2);
+-- INSERT INTO tb_produtos_categorias (produto_id, categoria_id) VALUES (1, 6);
+-- INSERT INTO tb_produtos_categorias (produto_id, categoria_id) VALUES (1, 1);
+-- INSERT INTO tb_produtos_categorias (produto_id, categoria_id) VALUES (1, 2);
+-- INSERT INTO tb_produtos_categorias (produto_id, categoria_id) VALUES (1, 3);
+-- INSERT INTO tb_produtos_categorias (produto_id, categoria_id) VALUES (2, 7);
+-- INSERT INTO tb_produtos_categorias (produto_id, categoria_id) VALUES (3, 6);
+-- INSERT INTO tb_produtos_categorias (produto_id, categoria_id) VALUES (4, 4);
+-- INSERT INTO tb_produtos_categorias (produto_id, categoria_id) VALUES (5, 2);
 

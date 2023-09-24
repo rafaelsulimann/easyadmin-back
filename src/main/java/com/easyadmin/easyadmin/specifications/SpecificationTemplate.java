@@ -10,18 +10,15 @@ import net.kaczmarzyk.spring.data.jpa.web.annotation.And;
 import net.kaczmarzyk.spring.data.jpa.web.annotation.Spec;
 
 public class SpecificationTemplate {
+    
+    @And({
+        @Spec(path = "nome", spec = LikeIgnoreCase.class),
+        @Spec(path = "descricao", spec = LikeIgnoreCase.class),
+    })
+    public interface ProdutoSpec extends Specification<Produto>{}
 
     @And({
-            @Spec(path = "nome", spec = LikeIgnoreCase.class),
-            @Spec(path = "descricao", spec = LikeIgnoreCase.class)
+        @Spec(path = "nome", spec = LikeIgnoreCase.class)
     })
-    public interface ProdutoSpec extends Specification<Produto> {
-    }
-
-    @And({
-            @Spec(path = "nome", spec = LikeIgnoreCase.class)
-    })
-    public interface CategoriaSpec extends Specification<Categoria> {
-    }
-
+    public interface Categoriapec extends Specification<Categoria>{}
 }

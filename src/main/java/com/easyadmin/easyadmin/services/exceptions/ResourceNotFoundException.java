@@ -1,10 +1,11 @@
 package com.easyadmin.easyadmin.services.exceptions;
 
-public class DatabaseException extends RuntimeException{
+public class ResourceNotFoundException extends RuntimeException{
 
     private static final long serialVersionUID = 1L;
 
-    public DatabaseException(String message){
+    public ResourceNotFoundException(String message){
         super(message);
     }
+    
 }

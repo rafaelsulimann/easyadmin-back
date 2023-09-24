@@ -18,45 +18,45 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.easyadmin.easyadmin.dtos.CategoriaRequestDTO;
-import com.easyadmin.easyadmin.dtos.CategoriaResponseDTO;
-import com.easyadmin.easyadmin.services.CategoriaService;
+import com.easyadmin.easyadmin.dtos.ProdutoRequestDTO;
+import com.easyadmin.easyadmin.dtos.ProdutoResponseDTO;
+import com.easyadmin.easyadmin.services.ProdutoService;
 import com.easyadmin.easyadmin.specifications.SpecificationTemplate;
 import com.easyadmin.easyadmin.utils.constraints.ResponseMessage;
 import com.easyadmin.easyadmin.utils.constraints.URI;
 
 @RestController
-@RequestMapping(value = URI.CATEGORIA)
-public class CategoriaController {
+@RequestMapping(value = URI.PRODUTO)
+public class ProdutoController {
 
     @Autowired
-    private CategoriaService categoriaService;
+    private ProdutoService produtoService;
 
     @GetMapping
-    public ResponseEntity<Page<CategoriaResponseDTO>> findAll(SpecificationTemplate.Categoriapec spec,
+    public ResponseEntity<Page<ProdutoResponseDTO>> findAll(SpecificationTemplate.ProdutoSpec spec,
             @PageableDefault(page = 0, size = 10, sort = "nome", direction = Sort.Direction.ASC) Pageable pageable){
-        return ResponseEntity.status(HttpStatus.OK).body(this.categoriaService.findAll(spec, pageable));
+        return ResponseEntity.status(HttpStatus.OK).body(this.produtoService.findAll(spec, pageable));
     }
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<CategoriaResponseDTO> findById(@PathVariable Long id){
-        return ResponseEntity.status(HttpStatus.OK).body(this.categoriaService.findById(id));
+    public ResponseEntity<ProdutoResponseDTO> findById (@PathVariable Long id){
+        return ResponseEntity.status(HttpStatus.OK).body(this.produtoService.findById(id));
     }
 
     @PostMapping
-    public ResponseEntity<CategoriaResponseDTO> insert(@RequestBody @Valid CategoriaRequestDTO dto){
-        return ResponseEntity.status(HttpStatus.CREATED).body(this.categoriaService.insert(dto));
+    public ResponseEntity<ProdutoResponseDTO> insert(@RequestBody @Valid ProdutoRequestDTO dto){
+        return ResponseEntity.status(HttpStatus.CREATED).body(this.produtoService.insert(dto));
     }
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity<CategoriaResponseDTO> update(@PathVariable Long id, @RequestBody @Valid CategoriaRequestDTO dto){
-        return ResponseEntity.status(HttpStatus.OK).body(this.categoriaService.update(id, dto));
+    public ResponseEntity<ProdutoResponseDTO> update(@PathVariable Long id, @RequestBody @Valid ProdutoRequestDTO dto){
+        return ResponseEntity.status(HttpStatus.OK).body(this.produtoService.update(id, dto));
     }
 
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<Object> delete(@PathVariable Long id){
-        this.categoriaService.delete(id);
-        return ResponseEntity.status(HttpStatus.OK).body(ResponseMessage.CATEGORIA_DELETED);
+        this.produtoService.delete(id);
+        return ResponseEntity.status(HttpStatus.OK).body(ResponseMessage.PRODUTO_DELETED);
     }
     
 }

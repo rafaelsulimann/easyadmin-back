@@ -16,16 +16,16 @@ public class ProdutoResponseDTO implements Serializable{
 
     private static final long serialVersionUID = 1L;
 
-    private Long productId;
+    private Long id;
     private String nome;
     private BigDecimal preco;
     private String descricao;
 
     public ProdutoResponseDTO(Produto entity){
-        this.productId = entity.getId();
-        this.nome = entity.getNome();
-        this.preco = entity.getPreco();
-        this.descricao = entity.getDescricao();
+        id = entity.getId();
+        nome = entity.getNome();
+        preco = entity.getPreco();
+        descricao = entity.getDescricao();
     }
     
 }
