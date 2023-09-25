@@ -1,6 +1,8 @@
 package com.easyadmin.easyadmin.models;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import javax.persistence.Column;
@@ -8,6 +10,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.validation.Valid;
 
@@ -36,9 +39,13 @@ public class Categoria implements Serializable{
     
     @Column(nullable = false, length = 100, unique = true)
     private String nome;
+
+    @ManyToMany(mappedBy = "categorias")
+    private List<Produto> produtos = new ArrayList<>();
     
     public Categoria(@Valid CategoriaRequestDTO dto, CategoriaRepository categoriaRepository) {
-        this.nome = this.validateDuplicidadeNomeCategoria(dto, categoriaRepository);
+        this.validateDuplicidadeNomeCategoria(dto, categoriaRepository);
+        this.nome = dto.getNome();
     }
 
     public void update(@Valid CategoriaRequestDTO dto, CategoriaRepository categoriaRepository) {
@@ -46,19 +53,25 @@ public class Categoria implements Serializable{
         this.nome = dto.getNome();
     }
 
-    private String validateDuplicidadeNomeCategoria(@Valid CategoriaRequestDTO dto, CategoriaRepository categoriaRepository) {
-        Optional<Categoria> entity = categoriaRepository.findByNomeIgnoreCase(dto.getNome());
-        if(entity.isPresent()) {
+    private void validateDuplicidadeNomeCategoria(@Valid CategoriaRequestDTO dto, CategoriaRepository categoriaRepository) {
+        Optional<Categoria> categoria = this.findByNomeIgnoreCase(dto, categoriaRepository);
+        if(categoria.isPresent()) {
             throw new DatabaseException(ExceptionMessage.EXISTS_CATEGORIA_BY_NOME);
-        } else {
-            return dto.getNome();
         }
     }
 
     private void validateDuplicidadeNomeCategoriaExcludesId(Long id, CategoriaRepository categoriaRepository, @Valid CategoriaRequestDTO dto) {
-        if(categoriaRepository.findByNomeIgnoreCaseExcludesId(id, dto.getNome()).isPresent()){
-            throw new DatabaseException(ExceptionMessage.EXISTS_CATEGORIA_BY_NOME);
+         Optional<Categoria> categoria = this.findByNomeIgnoreCase(dto, categoriaRepository);
+        if(categoria.isPresent()){
+            if(categoria.get().getId() != id){
+                throw new DatabaseException(ExceptionMessage.EXISTS_CATEGORIA_BY_NOME);
+            }
         }
     }
+
+    private Optional<Categoria> findByNomeIgnoreCase(CategoriaRequestDTO dto, CategoriaRepository categoriaRepository) {
+        return categoriaRepository.findByNomeIgnoreCase(dto.getNome());
+    }
+
 
 }

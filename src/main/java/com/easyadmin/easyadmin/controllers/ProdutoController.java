@@ -39,7 +39,7 @@ public class ProdutoController {
     }
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<ProdutoResponseDTO> findById (@PathVariable Long id){
+    public ResponseEntity<ProdutoResponseDTO> findById(@PathVariable Long id){
         return ResponseEntity.status(HttpStatus.OK).body(this.produtoService.findById(id));
     }
 
@@ -58,5 +58,5 @@ public class ProdutoController {
         this.produtoService.delete(id);
         return ResponseEntity.status(HttpStatus.OK).body(ResponseMessage.PRODUTO_DELETED);
     }
-    
+
 }

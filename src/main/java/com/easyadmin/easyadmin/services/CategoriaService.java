@@ -24,11 +24,10 @@ public class CategoriaService {
 
     public Page<CategoriaResponseDTO> findAll(Specification<Categoria> spec, Pageable pageable) {
         Page<Categoria> searchResult = this.categoriaRepository.findAll(spec, pageable);
-        Page<CategoriaResponseDTO> response = searchResult.map(categoria -> new CategoriaResponseDTO(categoria));
-        return response;
+        return searchResult.map(entity -> new CategoriaResponseDTO(entity));
     }
 
-    public CategoriaResponseDTO insert (@Valid CategoriaRequestDTO dto){
+    public CategoriaResponseDTO insert(@Valid CategoriaRequestDTO dto){
         Categoria entity = new Categoria(dto, this.categoriaRepository);
         entity = this.categoriaRepository.save(entity);
         return new CategoriaResponseDTO(entity);

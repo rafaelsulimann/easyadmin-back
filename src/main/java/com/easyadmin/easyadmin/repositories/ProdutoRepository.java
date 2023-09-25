@@ -11,14 +11,15 @@ import com.easyadmin.easyadmin.models.Produto;
 import com.easyadmin.easyadmin.utils.constraints.TableName;
 
 @Repository
-public interface ProdutoRepository extends JpaRepository<Produto, Long>, JpaSpecificationExecutor<Produto>{
+public interface ProdutoRepository extends JpaRepository<Produto, Long>, JpaSpecificationExecutor<Produto> {
 
     boolean existsByNome(String nome);
 
-    @Query(nativeQuery = true, value = "SELECT * FROM " + TableName.PRODUTO + " WHERE LOWER(nome) = LOWER(:nome) AND id != :id")
+    @Query(nativeQuery = true, value = "SELECT * FROM " + TableName.PRODUTO
+            + " WHERE LOWER(nome) = LOWER(:nome) AND id != :id")
     Optional<Produto> findByNomeIgnoreCaseExcludesId(Long id, String nome);
 
     @Query(nativeQuery = true, value = "SELECT * FROM " + TableName.PRODUTO + " WHERE LOWER(nome) = LOWER(:nome)")
     Optional<Produto> findByNomeIgnoreCase(String nome);
-    
+
 }
