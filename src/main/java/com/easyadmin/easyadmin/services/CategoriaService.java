@@ -1,5 +1,7 @@
 package com.easyadmin.easyadmin.services;
 
+import java.util.List;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +42,7 @@ public class CategoriaService {
         return new CategoriaResponseDTO(entity);
     }
 
-    private Categoria findCategoriaById(Long id) {
+    public Categoria findCategoriaById(Long id) {
         return this.categoriaRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(ExceptionMessage.CATEGORIA_NOT_FOUND));
     }
 
@@ -55,6 +57,10 @@ public class CategoriaService {
     public CategoriaResponseDTO findById(Long id) {
         Categoria entity = this.findCategoriaById(id);
         return new CategoriaResponseDTO(entity);
+    }
+
+    public List<Categoria> findAllCategoriasByProduto(Long id) {
+        return this.categoriaRepository.findAllCategoriasByProduto(id);
     }
     
 }

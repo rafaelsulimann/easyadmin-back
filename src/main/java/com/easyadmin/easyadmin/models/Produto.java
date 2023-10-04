@@ -16,26 +16,24 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.Valid;
 
 import com.easyadmin.easyadmin.dtos.ProdutoRequestDTO;
-import com.easyadmin.easyadmin.repositories.CategoriaRepository;
 import com.easyadmin.easyadmin.repositories.ProdutoRepository;
+import com.easyadmin.easyadmin.services.CategoriaService;
 import com.easyadmin.easyadmin.services.exceptions.DatabaseException;
-import com.easyadmin.easyadmin.services.exceptions.ResourceNotFoundException;
 import com.easyadmin.easyadmin.utils.constraints.ExceptionMessage;
 import com.easyadmin.easyadmin.utils.constraints.TableName;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 @Entity
 @Table(name = TableName.PRODUTO)
 @Data
 @NoArgsConstructor
-@ToString
 public class Produto implements Serializable{
 
     private static final long serialVersionUID = 1L;
@@ -57,53 +55,58 @@ public class Produto implements Serializable{
     @JoinTable(name = TableName.PRODUTO_CATEGORIA, joinColumns = @JoinColumn(name = "produto_id"), inverseJoinColumns = @JoinColumn(name = "categoria_id"))
     private List<Categoria> categorias = new ArrayList<>();
 
-    public Produto(@Valid ProdutoRequestDTO dto, ProdutoRepository produtoRepository, CategoriaRepository categoriaRepository) {
-        this.validateDuplicidadeNomeProduto(dto, produtoRepository);
-        this.nome = dto.getNome();
+    @OneToMany(mappedBy = "id.produto")
+    private List<ItemVenda> itens = new ArrayList<>();
+
+    public Produto(@Valid ProdutoRequestDTO dto, ProdutoRepository produtoRepository, CategoriaService categoriaService) {
+        this.nome = this.validateDuplicidadeNomeProduto(dto, produtoRepository);
         this.preco = dto.getPreco();
         this.descricao = dto.getDescricao();
-        this.insertCategorias(dto, categoriaRepository);
+        this.categorias = this.insertCategorias(dto, categoriaService);
     }
 
-    public void update(@Valid ProdutoRequestDTO dto, ProdutoRepository produtoRepository, CategoriaRepository categoriaRepository) {
-        this.validateDuplicidadeNomeProdutoExcludesId(this.id, produtoRepository, dto);
-        this.nome = dto.getNome();
+    public void update(@Valid ProdutoRequestDTO dto, ProdutoRepository produtoRepository, CategoriaService categoriaService) {
+        this.nome = this.validateDuplicidadeNomeProdutoExcludesId(this.id, produtoRepository, dto);
         this.preco = dto.getPreco();
         this.descricao = dto.getDescricao();
-        this.updateCategorias(dto, categoriaRepository);
+        this.categorias = this.updateCategorias(dto, categoriaService);
     }
 
-    private void insertCategorias(@Valid ProdutoRequestDTO dto, CategoriaRepository categoriaRepository) {
+    private List<Categoria> insertCategorias(@Valid ProdutoRequestDTO dto, CategoriaService categoriaService) {
         this.validateDuplicidadeCategorias(dto);
         dto.getCategorias().stream().forEach(categoriaDto -> {
-            Categoria categoria = categoriaRepository.findById(categoriaDto.getId()).orElseThrow(() -> new ResourceNotFoundException(ExceptionMessage.CATEGORIA_NOT_FOUND));
+            Categoria categoria = categoriaService.findCategoriaById(categoriaDto.getId());
             this.categorias.add(categoria);
         });
+        return this.categorias;
     }
 
-    private void updateCategorias(@Valid ProdutoRequestDTO dto, CategoriaRepository categoriaRepository) {
+    private List<Categoria> updateCategorias(@Valid ProdutoRequestDTO dto, CategoriaService categoriaService) {
         this.validateDuplicidadeCategorias(dto);
         this.deleteAllCategorias();
         dto.getCategorias().stream().forEach(categoriaDto -> {
-            Categoria categoria = categoriaRepository.findById(categoriaDto.getId()).orElseThrow(() -> new ResourceNotFoundException(ExceptionMessage.CATEGORIA_NOT_FOUND));
+            Categoria categoria = categoriaService.findCategoriaById(categoriaDto.getId());
             this.categorias.add(categoria);
         });
+        return this.categorias;
     }
 
-    private void validateDuplicidadeNomeProduto(@Valid ProdutoRequestDTO dto, ProdutoRepository produtoRepository) {
+    private String validateDuplicidadeNomeProduto(@Valid ProdutoRequestDTO dto, ProdutoRepository produtoRepository) {
         Optional<Produto> entity = this.findByNomeIgnoreCase(dto, produtoRepository);
         if(entity.isPresent()) {
             throw new DatabaseException(ExceptionMessage.EXISTS_PRODUTO_BY_NOME);
         }
+        return dto.getNome();
     }    
 
-    private void validateDuplicidadeNomeProdutoExcludesId(Long id, ProdutoRepository produtoRepository, @Valid ProdutoRequestDTO dto) {
+    private String validateDuplicidadeNomeProdutoExcludesId(Long id, ProdutoRepository produtoRepository, @Valid ProdutoRequestDTO dto) {
         Optional<Produto> entity = this.findByNomeIgnoreCase(dto, produtoRepository);
         if(entity.isPresent()){
             if(entity.get().getId() != id){
                 throw new DatabaseException(ExceptionMessage.EXISTS_PRODUTO_BY_NOME);
             }
         }
+        return dto.getNome();
     }
 
     private Optional<Produto> findByNomeIgnoreCase(@Valid ProdutoRequestDTO dto, ProdutoRepository produtoRepository){

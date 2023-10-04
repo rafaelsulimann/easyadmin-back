@@ -19,50 +19,44 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.easyadmin.easyadmin.dtos.ProdutoRequestDTO;
-import com.easyadmin.easyadmin.dtos.ProdutoResponseDTO;
-import com.easyadmin.easyadmin.services.ProdutoService;
+import com.easyadmin.easyadmin.dtos.UsuarioRequestDTO;
+import com.easyadmin.easyadmin.dtos.UsuarioResponseDTO;
+import com.easyadmin.easyadmin.services.UsuarioService;
 import com.easyadmin.easyadmin.specifications.SpecificationTemplate;
 import com.easyadmin.easyadmin.utils.constraints.ResponseMessage;
 import com.easyadmin.easyadmin.utils.constraints.URI;
 
 @RestController
-@RequestMapping(value = URI.PRODUTO)
-public class ProdutoController {
+@RequestMapping(value = URI.USUARIO)
+public class UsuarioController {
 
     @Autowired
-    private ProdutoService produtoService;
+    private UsuarioService usuarioService;
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_CLIENT')")
-    public ResponseEntity<Page<ProdutoResponseDTO>> findAll(SpecificationTemplate.ProdutoSpec spec,
-    @PageableDefault(page = 0, size = 10, sort = "nome", direction = Sort.Direction.ASC) Pageable pageable){
-        return ResponseEntity.status(HttpStatus.OK).body(this.produtoService.findAll(spec, pageable));
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<Page<UsuarioResponseDTO>> findAll(SpecificationTemplate.UsuarioSpec spec,
+        @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable){
+           return ResponseEntity.status(HttpStatus.OK).body(this.usuarioService.findAll(spec, pageable)); 
     }
-    
-    @GetMapping(value = "/{id}")
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_CLIENT')")
-    public ResponseEntity<ProdutoResponseDTO> findById(@PathVariable Long id){
-        return ResponseEntity.status(HttpStatus.OK).body(this.produtoService.findById(id));
-    }
-    
+
     @PostMapping
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<ProdutoResponseDTO> insert(@RequestBody @Valid ProdutoRequestDTO dto){
-        return ResponseEntity.status(HttpStatus.CREATED).body(this.produtoService.insert(dto));
+    public ResponseEntity<UsuarioResponseDTO> insert(@RequestBody @Valid UsuarioRequestDTO dto){
+        return ResponseEntity.status(HttpStatus.CREATED).body(this.usuarioService.insert(dto));
     }
-    
+
     @PutMapping(value = "/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<ProdutoResponseDTO> update(@PathVariable Long id, @RequestBody @Valid ProdutoRequestDTO dto){
-        return ResponseEntity.status(HttpStatus.OK).body(this.produtoService.update(id, dto));
+    public ResponseEntity<UsuarioResponseDTO> update(@PathVariable Long id, @RequestBody @Valid UsuarioRequestDTO dto){
+        return ResponseEntity.status(HttpStatus.OK).body(this.usuarioService.update(id, dto));
     }
-    
+
     @DeleteMapping(value = "/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Object> delete(@PathVariable Long id){
-        this.produtoService.delete(id);
-        return ResponseEntity.status(HttpStatus.OK).body(ResponseMessage.PRODUTO_DELETED);
+        this.usuarioService.delete(id);
+        return ResponseEntity.status(HttpStatus.OK).body(ResponseMessage.USUARIO_DELETED);
     }
-
+    
 }
